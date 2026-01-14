@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Аналитика коммуникаций</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="logo">CommAnalytics</div>
+        <nav class="nav">
+          <button class="nav-item nav-item--active" data-view="dashboard">
+            Дашборд
+          </button>
+          <button class="nav-item" data-view="conversations">
+            Коммуникации
+          </button>
+          <button class="nav-item" data-view="reports">
+            Отчёты
+          </button>
+          <button class="nav-item" data-view="settings">
+            Настройки
+          </button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h1 class="topbar-title">Аналитика коммуникаций</h1>
+            <p class="topbar-subtitle">
+              Обзор ключевых метрик по каналам и команде
+            </p>
+          </div>
+
+          <div class="filters">
+            <label class="filter">
+              <span>Период</span>
+              <select id="filter-period">
+                <option value="7d">Последние 7 дней</option>
+                <option value="30d" selected>Последние 30 дней</option>
+                <option value="90d">Последние 90 дней</option>
+              </select>
+            </label>
+            <label class="filter">
+              <span>Канал</span>
+              <select id="filter-channel">
+                <option value="all" selected>Все каналы</option>
+                <option value="email">Email</option>
+                <option value="chat">Чат</option>
+                <option value="call">Звонки</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section id="view-dashboard" class="view view--active">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-title">Всего коммуникаций</div>
+              <div class="kpi-value" id="kpi-total">–</div>
+              <div class="kpi-trend positive" id="kpi-total-trend">–</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Среднее время ответа</div>
+              <div class="kpi-value" id="kpi-response-time">–</div>
+              <div class="kpi-trend negative" id="kpi-response-time-trend">–</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Уровень удовлетворённости (CSAT)</div>
+              <div class="kpi-value" id="kpi-csat">–</div>
+              <div class="kpi-trend positive" id="kpi-csat-trend">–</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-title">Конверсия в решение</div>
+              <div class="kpi-value" id="kpi-resolution">–</div>
+              <div class="kpi-trend positive" id="kpi-resolution-trend">–</div>
+            </div>
+          </div>
+
+          <div class="content-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h2>Динамика коммуникаций</h2>
+                <span class="panel-caption">Количество обращений по дням</span>
+              </div>
+              <canvas id="chart-activity" height="120"></canvas>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h2>Распределение по каналам</h2>
+                <span class="panel-caption">Доля обращений по типам каналов</span>
+              </div>
+              <canvas id="chart-channels" height="120"></canvas>
+            </div>
+          </div>
+
+          <div class="panel panel--full">
+            <div class="panel-header">
+              <h2>Последние коммуникации</h2>
+              <span class="panel-caption">Мок‑данные для примера</span>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Клиент</th>
+                    <th>Канал</th>
+                    <th>Тема</th>
+                    <th>Менеджер</th>
+                    <th>Статус</th>
+                    <th>CSAT</th>
+                    <th>Дата</th>
+                  </tr>
+                </thead>
+                <tbody id="conversations-table-body">
+                  <!-- Заполняется из app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-conversations" class="view">
+          <div class="panel panel--full">
+            <div class="panel-header">
+              <h2>Все коммуникации</h2>
+              <span class="panel-caption">Расширенный список (пока мок‑данные)</span>
+            </div>
+            <p class="placeholder">
+              Здесь позже можно реализовать расширенный поиск, фильтры по тегам,
+              экспорт и детальный просмотр диалогов.
+            </p>
+          </div>
+        </section>
+
+        <section id="view-reports" class="view">
+          <div class="panel panel--full">
+            <div class="panel-header">
+              <h2>Отчёты</h2>
+              <span class="panel-caption">
+                Периодические отчёты, экспорт в CSV/Excel, сравнение периодов
+              </span>
+            </div>
+            <p class="placeholder">
+              Можно добавить конструктор отчётов с выбором метрик и периодов.
+            </p>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="panel panel--full">
+            <div class="panel-header">
+              <h2>Настройки</h2>
+              <span class="panel-caption">Параметры аналитики и интерфейса</span>
+            </div>
+            <p class="placeholder">
+              Здесь могут быть настройки каналов, SLA, метрик, пользователей и
+              ролей.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
