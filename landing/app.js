@@ -224,6 +224,35 @@ function updateAnalyzeButton() {
   analyzeBtn.disabled = !hasFile && !hasUrl;
 }
 
+// Функция отправки аудиофайла на бэкенд и получения результатов анализа
+async function analyzeAudioOnBackend() {
+  const backendUrl = "https://webhook.aitechnic.ru/webhook/call-url";
+  
+  const formData = new FormData();
+  
+  // Добавляем файл или URL в зависимости от выбранного способа
+  if (currentAudioFile) {
+    formData.append("audio", currentAudioFile);
+  } else if (currentAudioUrl) {
+    formData.append("audio_url", currentAudioUrl);
+  } else {
+    throw new Error("Не выбран аудиофайл или URL");
+  }
+
+  const response = await fetch(backendUrl, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Ошибка сервера: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 // Анализ аудио
 analyzeBtn.addEventListener("click", async () => {
   if (analyzeBtn.disabled) return;
@@ -234,8 +263,8 @@ analyzeBtn.addEventListener("click", async () => {
   analyzeBtn.disabled = true;
 
   try {
-    // Имитация загрузки и анализа (в реальном приложении здесь будет API запрос)
-    await simulateAnalysis();
+    // Отправляем аудио на бэкенд и получаем результаты
+    const analysisResult = await analyzeAudioOnBackend();
 
     // Устанавливаем аудио для плеера
     if (currentAudioFile) {
@@ -245,11 +274,12 @@ analyzeBtn.addEventListener("click", async () => {
       audioPlayer.src = currentAudioUrl;
     }
 
-    // Показываем результаты
-    displayResults();
+    // Показываем результаты анализа
+    displayResults(analysisResult);
     uploadSection.style.display = "none";
     resultsSection.style.display = "block";
   } catch (error) {
+    console.error("Ошибка при анализе:", error);
     alert("Ошибка при анализе: " + error.message);
   } finally {
     analyzeBtn.querySelector(".btn-text").style.display = "block";
@@ -258,154 +288,145 @@ analyzeBtn.addEventListener("click", async () => {
   }
 });
 
-// Имитация анализа (задержка + генерация мок-данных)
-function simulateAnalysis() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(generateMockAnalysis());
-    }, 3000);
-  });
-}
+// Мок-функции больше не нужны - используем реальные данные от бэкенда
 
-// Генерация мок-данных анализа
-function generateMockAnalysis() {
-  const duration = currentAudioFile
-    ? Math.floor(Math.random() * 300 + 180) // 3-8 минут
-    : Math.floor(Math.random() * 600 + 300); // 5-15 минут
+// Отображение результатов анализа
+function displayResults(backendData) {
+  if (!backendData) {
+    console.error("Нет данных для отображения");
+    return;
+  }
 
-  return {
-    duration: duration,
-    participants: Math.random() > 0.5 ? 2 : 3,
-    transcription: `Это пример транскрипции звонка. В реальном приложении здесь будет полный текст разговора, 
-    распознанный с помощью технологии распознавания речи. Транскрипция включает все реплики участников, 
-    паузы и ключевые моменты обсуждения. Система анализирует интонацию, эмоциональную окраску речи 
-    и выделяет важные темы для дальнейшего анализа.`,
-    keyPoints: [
-      "Обсуждение условий сотрудничества и сроков реализации проекта",
-      "Согласование бюджета и этапов оплаты",
-      "Определение ключевых контактов и ответственных лиц",
-      "Планирование следующего шага - подготовка коммерческого предложения",
-    ],
-    sentiment: {
-      positive: 65,
-      neutral: 25,
-      negative: 10,
-    },
-    quality: {
-      clarity: 85,
-      engagement: 78,
-      professionalism: 92,
-    },
-    stats: {
-      totalWords: Math.floor(Math.random() * 2000 + 1000),
-      speakingTime: Math.floor(duration * 0.7),
-      silenceTime: Math.floor(duration * 0.3),
-      interruptions: Math.floor(Math.random() * 5),
-    },
-  };
-}
+  // Извлекаем данные из ответа бэкенда
+  const analysis = backendData.analysis || {};
+  const transcript = backendData.transcript || {};
+  const totals = analysis.totals || {};
+  const summary = analysis.summary || {};
+  const stages = analysis.stages || [];
+  const duration = backendData.duration_seconds || 0;
 
-// Отображение результатов
-let analysisData = null;
+  // Подсчитываем количество участников из транскрипции
+  const transcriptText = transcript.text || "";
+  const participants = transcriptText.match(/(?:Оператор|Клиент):/g) 
+    ? [...new Set(transcriptText.match(/(?:Оператор|Клиент):/g))].length 
+    : 2;
 
-function displayResults() {
-  // Генерируем данные анализа
-  analysisData = generateMockAnalysis();
+  // Подсчитываем количество слов
+  const wordCount = transcriptText.split(/\s+/).filter(word => word.length > 0).length;
 
   // Общая статистика
   const generalStats = document.getElementById("general-stats");
   generalStats.innerHTML = `
     <div class="stat-item">
       <span class="stat-label">Участников</span>
-      <span class="stat-value">${analysisData.participants}</span>
+      <span class="stat-value">${participants}</span>
     </div>
     <div class="stat-item">
       <span class="stat-label">Всего слов</span>
-      <span class="stat-value">${analysisData.stats.totalWords}</span>
+      <span class="stat-value">${wordCount}</span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">Прерываний</span>
-      <span class="stat-value">${analysisData.stats.interruptions}</span>
+      <span class="stat-label">Общий балл</span>
+      <span class="stat-value">${totals.points_earned_total || 0} / ${totals.max_points_overall || 100}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Оценка</span>
+      <span class="stat-value">${totals.score_percent || 0}%</span>
     </div>
   `;
 
   // Длительность
   const durationStats = document.getElementById("duration-stats");
-  const minutes = Math.floor(analysisData.duration / 60);
-  const seconds = analysisData.duration % 60;
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
   durationStats.innerHTML = `
     <div class="stat-item">
       <span class="stat-label">Общая длительность</span>
       <span class="stat-value">${minutes}:${seconds.toString().padStart(2, "0")}</span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">Время речи</span>
-      <span class="stat-value">${Math.floor(analysisData.stats.speakingTime / 60)}:${(analysisData.stats.speakingTime % 60).toString().padStart(2, "0")}</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-label">Паузы</span>
-      <span class="stat-value">${Math.floor(analysisData.stats.silenceTime / 60)}:${(analysisData.stats.silenceTime % 60).toString().padStart(2, "0")}</span>
+      <span class="stat-label">Call ID</span>
+      <span class="stat-value" style="font-size: 11px; font-family: monospace;">${backendData.call_id || "—"}</span>
     </div>
   `;
 
   // Транскрипция
-  document.getElementById("transcription").textContent = analysisData.transcription;
+  document.getElementById("transcription").textContent = transcriptText || "Транскрипция недоступна";
 
-  // Ключевые моменты
+  // Ключевые моменты (используем рекомендации и сильные стороны)
   const keyPoints = document.getElementById("key-points");
-  keyPoints.innerHTML = analysisData.keyPoints
-    .map((point) => `<div class="key-point">${point}</div>`)
-    .join("");
+  const allPoints = [
+    ...(summary.strengths || []).map(s => `✅ ${s}`),
+    ...(summary.recommendations || []).map(r => `💡 ${r}`),
+    ...(summary.weaknesses || []).map(w => `⚠️ ${w}`)
+  ];
+  
+  if (allPoints.length > 0) {
+    keyPoints.innerHTML = allPoints
+      .map((point) => `<div class="key-point">${point}</div>`)
+      .join("");
+  } else {
+    keyPoints.innerHTML = '<div class="key-point">Нет данных для отображения</div>';
+  }
 
-  // Тональность
+  // Тональность (вычисляем на основе оценок этапов)
+  const passedStages = stages.filter(s => s.status === "pass").length;
+  const totalStages = stages.length;
+  const sentimentPositive = totalStages > 0 ? Math.round((passedStages / totalStages) * 100) : 0;
+  const sentimentNegative = 100 - sentimentPositive;
+
   const sentiment = document.getElementById("sentiment");
   sentiment.innerHTML = `
     <div class="sentiment-item">
       <span class="sentiment-label">Позитивная</span>
       <div class="sentiment-bar">
-        <div class="sentiment-fill positive" style="width: ${analysisData.sentiment.positive}%"></div>
+        <div class="sentiment-fill positive" style="width: ${sentimentPositive}%"></div>
       </div>
-      <span class="sentiment-value">${analysisData.sentiment.positive}%</span>
+      <span class="sentiment-value">${sentimentPositive}%</span>
     </div>
     <div class="sentiment-item">
       <span class="sentiment-label">Нейтральная</span>
       <div class="sentiment-bar">
-        <div class="sentiment-fill neutral" style="width: ${analysisData.sentiment.neutral}%"></div>
+        <div class="sentiment-fill neutral" style="width: 0%"></div>
       </div>
-      <span class="sentiment-value">${analysisData.sentiment.neutral}%</span>
+      <span class="sentiment-value">0%</span>
     </div>
     <div class="sentiment-item">
       <span class="sentiment-label">Негативная</span>
       <div class="sentiment-bar">
-        <div class="sentiment-fill negative" style="width: ${analysisData.sentiment.negative}%"></div>
+        <div class="sentiment-fill negative" style="width: ${sentimentNegative}%"></div>
       </div>
-      <span class="sentiment-value">${analysisData.sentiment.negative}%</span>
+      <span class="sentiment-value">${sentimentNegative}%</span>
     </div>
   `;
 
-  // Метрики качества
+  // Метрики качества (на основе этапов)
+  const clarityScore = stages.find(s => s.stage_code === "greeting")?.points_earned || 0;
+  const engagementScore = stages.find(s => s.stage_code === "needs_identification")?.points_earned || 0;
+  const professionalismScore = stages.find(s => s.stage_code === "complaint_handling")?.points_earned || 0;
+
   const qualityMetrics = document.getElementById("quality-metrics");
   qualityMetrics.innerHTML = `
     <div class="metric-item">
-      <span class="metric-label">Чёткость речи</span>
+      <span class="metric-label">Приветствие</span>
       <div class="metric-bar">
-        <div class="metric-fill" style="width: ${analysisData.quality.clarity}%"></div>
+        <div class="metric-fill" style="width: ${(clarityScore / 5) * 100}%"></div>
       </div>
-      <span class="metric-value">${analysisData.quality.clarity}%</span>
+      <span class="metric-value">${clarityScore}/5</span>
     </div>
     <div class="metric-item">
-      <span class="metric-label">Вовлечённость</span>
+      <span class="metric-label">Выявление потребностей</span>
       <div class="metric-bar">
-        <div class="metric-fill" style="width: ${analysisData.quality.engagement}%"></div>
+        <div class="metric-fill" style="width: ${(engagementScore / 25) * 100}%"></div>
       </div>
-      <span class="metric-value">${analysisData.quality.engagement}%</span>
+      <span class="metric-value">${engagementScore}/25</span>
     </div>
     <div class="metric-item">
-      <span class="metric-label">Профессионализм</span>
+      <span class="metric-label">Работа с жалобой</span>
       <div class="metric-bar">
-        <div class="metric-fill" style="width: ${analysisData.quality.professionalism}%"></div>
+        <div class="metric-fill" style="width: ${(professionalismScore / 25) * 100}%"></div>
       </div>
-      <span class="metric-value">${analysisData.quality.professionalism}%</span>
+      <span class="metric-value">${professionalismScore}/25</span>
     </div>
   `;
 }
