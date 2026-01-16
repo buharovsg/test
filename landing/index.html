@@ -48,65 +48,6 @@
       </header>
 
       <main class="main">
-        <section class="video-section" id="video-section">
-          <div class="video-card">
-            <div class="video-header">
-              <div class="video-header-content">
-                <h2>🤖 Как работает ИИ контроль качества звонков</h2>
-                <p class="video-description">
-                  Узнайте, как искусственный интеллект анализирует ваши звонки и помогает улучшить качество коммуникаций
-                </p>
-              </div>
-              <button class="video-toggle" id="video-toggle" aria-label="Свернуть/развернуть видео">
-                <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-              </button>
-            </div>
-            <div class="video-wrapper" id="video-wrapper">
-              <div class="video-container">
-                <!-- Можно вставить YouTube видео, Vimeo или любое другое видео -->
-                <!-- Пример для YouTube (замените VIDEO_ID на реальный ID видео) -->
-                <iframe
-                  id="video-player"
-                  class="video-iframe"
-                  src=""
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                  loading="lazy"
-                ></iframe>
-                <!-- Альтернатива: обычный video элемент для локального видео -->
-                <!--
-                <video class="video-element" controls>
-                  <source src="path/to/video.mp4" type="video/mp4">
-                  Ваш браузер не поддерживает видео.
-                </video>
-                -->
-                <div class="video-placeholder" id="video-placeholder">
-                  <div class="placeholder-content">
-                    <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                    </svg>
-                    <p class="placeholder-text">Вставьте ссылку на видео</p>
-                    <p class="placeholder-hint">Или используйте YouTube/Vimeo embed код</p>
-                    <div class="video-url-input-wrapper">
-                      <input
-                        type="text"
-                        id="video-url-input"
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        class="video-url-input"
-                      />
-                      <button class="video-url-submit" id="video-url-submit">Загрузить</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="upload-section" id="upload-section">
           <div class="upload-card">
             <h2>Загрузите аудиофайл для анализа</h2>
@@ -163,6 +104,168 @@
                 Анализируем...
               </span>
             </button>
+          </div>
+        </section>
+
+        <section class="infographic-section" id="infographic-section">
+          <div class="infographic-card">
+            <div class="infographic-header">
+              <h2>🤖 Почему ИИ прослушка звонков лучше, чем человек?</h2>
+              <p class="infographic-description">
+                Сравните преимущества искусственного интеллекта в анализе коммуникаций
+              </p>
+            </div>
+
+            <div class="comparison-grid">
+              <div class="comparison-card ai-card">
+                <div class="comparison-header">
+                  <div class="comparison-icon ai-icon">🤖</div>
+                  <h3>Искусственный интеллект</h3>
+                </div>
+                <ul class="comparison-list">
+                  <li class="comparison-item">
+                    <span class="item-icon">⚡</span>
+                    <div class="item-content">
+                      <strong>Мгновенный анализ</strong>
+                      <span>Обработка звонка за секунды</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">📊</span>
+                    <div class="item-content">
+                      <strong>100% охват</strong>
+                      <span>Анализирует каждый звонок без исключений</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">🎯</span>
+                      <div class="item-content">
+                        <strong>Объективность</strong>
+                        <span>Без эмоций и предвзятости</span>
+                      </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">💰</span>
+                    <div class="item-content">
+                      <strong>Экономия до 80%</strong>
+                      <span>Снижение затрат на контроль качества</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">📈</span>
+                    <div class="item-content">
+                      <strong>Детальная аналитика</strong>
+                      <span>Метрики, тренды, прогнозы в реальном времени</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">🔄</span>
+                    <div class="item-content">
+                      <strong>Работа 24/7</strong>
+                      <span>Не устаёт, не отвлекается, всегда в работе</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">🔍</span>
+                    <div class="item-content">
+                      <strong>Глубокий анализ</strong>
+                      <span>Тональность, эмоции, ключевые слова, паттерны</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">📝</span>
+                    <div class="item-content">
+                      <strong>Автоматическая транскрипция</strong>
+                      <span>Полный текст разговора с разметкой участников</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="comparison-card human-card">
+                <div class="comparison-header">
+                  <div class="comparison-icon human-icon">👤</div>
+                  <h3>Человек-аудитор</h3>
+                </div>
+                <ul class="comparison-list">
+                  <li class="comparison-item">
+                    <span class="item-icon">⏱️</span>
+                    <div class="item-content">
+                      <strong>Долгий анализ</strong>
+                      <span>Требуется время на прослушивание и оценку</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">📉</span>
+                    <div class="item-content">
+                      <strong>Выборочный контроль</strong>
+                      <span>Обычно 5-10% звонков из-за ограниченных ресурсов</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">😔</span>
+                    <div class="item-content">
+                      <strong>Субъективность</strong>
+                      <span>Влияние настроения, усталости, личных предпочтений</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">💸</span>
+                    <div class="item-content">
+                      <strong>Высокие затраты</strong>
+                      <span>Зарплата аудиторов, обучение, оборудование</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">📋</span>
+                    <div class="item-content">
+                      <strong>Ручная отчётность</strong>
+                      <span>Время на составление отчётов и сводок</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">😴</span>
+                    <div class="item-content">
+                      <strong>Ограниченное время</strong>
+                      <span>Рабочий день, перерывы, отпуска</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">👁️</span>
+                    <div class="item-content">
+                      <strong>Поверхностный анализ</strong>
+                      <span>Фокус на основных моментах, детали упускаются</span>
+                    </div>
+                  </li>
+                  <li class="comparison-item">
+                    <span class="item-icon">✍️</span>
+                    <div class="item-content">
+                      <strong>Ручные заметки</strong>
+                      <span>Риск пропустить важные детали при записи</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="infographic-stats">
+              <div class="stat-box">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">Быстрее анализ</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Охват звонков</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">80%</div>
+                <div class="stat-label">Экономия средств</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Доступность</div>
+              </div>
+            </div>
           </div>
         </section>
 
